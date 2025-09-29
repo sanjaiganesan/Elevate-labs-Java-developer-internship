@@ -1,0 +1,87 @@
+package task5;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+class Account {
+    protected String accountHolder;
+    protected double balance;
+    protected List<String> transactionHistory;
+
+    public Account(String accountHolder, double initialBalance) {
+        this.accountHolder = accountHolder;
+        this.balance = initialBalance;
+        this.transactionHistory = new ArrayList<>();
+        transactionHistory.add("Account created with balance: " + initialBalance);
+    }
+
+    public void deposit(double amount) {
+        balance += amount;
+        transactionHistory.add("Deposited: " + amount + ", Balance: " + balance);
+    }
+
+    public void withdraw(double amount) {
+        if (amount <= balance) {
+            balance -= amount;
+            transactionHistory.add("Withdrew: " + amount + ", Balance: " + balance);
+        } else {
+            transactionHistory.add("Withdrawal failed. Insufficient balance.");
+            System.out.println("Insufficient balance!");
+        }
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void printTransactionHistory() {
+        System.out.println("Transaction history for " + accountHolder + ":");
+        for (String txn : transactionHistory) {
+            System.out.println(txn);
+        }
+    }
+}
+
+
+class SavingsAccount extends Account {
+    private double withdrawalLimit;
+
+    public SavingsAccount(String accountHolder, double initialBalance, double withdrawalLimit) {
+        super(accountHolder, initialBalance);
+        this.withdrawalLimit = withdrawalLimit;
+    }
+
+    @Override
+    public void withdraw(double amount) {
+        if (amount > withdrawalLimit) {
+            transactionHistory.add("Withdrawal of " + amount + " failed. Limit is " + withdrawalLimit);
+            System.out.println("Withdrawal exceeds limit!");
+        } else if (amount <= balance) {
+            balance -= amount;
+            transactionHistory.add("Savings withdrawal: " + amount + ", Balance: " + balance);
+        } else {
+            transactionHistory.add("Withdrawal failed. Insufficient balance.");
+            System.out.println("Insufficient balance!");
+        }
+    }
+}
+
+
+public class BankApp {
+    public static void main(String[] args) {
+        Account acc1 = new Account("Sanjai", 1000);
+        acc1.deposit(500);
+        acc1.withdraw(300);
+        acc1.printTransactionHistory();
+
+        System.out.println("-----------");
+
+        SavingsAccount acc2 = new SavingsAccount("Rahul", 2000, 1000);
+        acc2.deposit(1000);
+        acc2.withdraw(1500); // within limit
+        acc2.withdraw(1200); // exceeds limit
+        acc2.printTransactionHistory();
+    }
+}
+
